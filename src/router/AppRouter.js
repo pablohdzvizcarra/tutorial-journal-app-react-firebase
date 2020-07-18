@@ -11,8 +11,7 @@ import { JournalScreen } from '../components/journal/JournalScreen';
 import { useState } from 'react';
 import { PublicRoute } from './PublicRoute';
 import { PrivateRoute } from './PrivateRoute';
-import { loadNotes } from '../helpers/loadNotes';
-import { setNotes } from '../actions/notes';
+import { startLoadingNotes } from '../actions/notes';
 
 export default function AppRouter() {
 
@@ -36,17 +35,15 @@ export default function AppRouter() {
     // user tiene los datos del usuario autenticado
     firebase.auth().onAuthStateChanged(async (user) => {
       
+      // si existe un usuario se obtiene el uid del user
       if (user?.uid) {
 
         // guardamos el usuario en el store si esta logeado en firebase
         dispatch(login(user.uid, user.displayName));
         setIsLoggedIn(true);
 
-        // se obtienen las notas mediante el helper
-        const notes = await loadNotes(user.uid);
-
-        // se cargan las notes al state mediante el helper y action y reducer
-        dispatch(setNotes(notes));
+        // dispatch para obtener las notas de firebase
+        dispatch(startLoadingNotes(user.uid));
         
       } else {
 
@@ -70,14 +67,12 @@ export default function AppRouter() {
       <div>
         <Switch>
           
-          Rutas Publicas
           <PublicRoute
             path="/auth"
             component={AuthRouter}
             isLoggedIn={isLoggedIn}
           />
           
-          Rutas Privadas
           <PrivateRoute
             exact
             isLoggedIn={isLoggedIn}

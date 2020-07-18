@@ -9,8 +9,9 @@ export const JournalScreen = () => {
   // obteniendo la data del store 
   const { active } = useSelector(state => state.notes);
 
+  
   return (
-    <div className="journal__main-content">
+    <div className="journal__main-content animate__animated animate__fadeIn animate__faster" >
       <Sidebar />
       <main>
         {/* Se muestra condicionalmente los componentes en base al valor de -active- */}

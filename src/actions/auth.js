@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import { types } from "../types/types";
 import {firebase, googleAuthProvider} from '../firebase/firebase-config';
 import { startLoading, finishLoading } from "./ui";
+import { noteLogout } from './notes';
 
 export const startLoginEmailPassword = (email, password) => {
   // cuando sean tareas asincronas se retorna un callback, a ese callback le tienes que pasar como argumento el disptach a ejecutar
@@ -10,7 +11,7 @@ export const startLoginEmailPassword = (email, password) => {
 
     dispatch(startLoading());// verificando si esta cargando
 
-    firebase
+    return firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((data) => {
@@ -93,8 +94,15 @@ export const startLogout = () => {
   return async (dispatch) => {
 
     try {
+      // metodo para cerrar la cuenta en firebase
       await firebase.auth().signOut();
+
+      // action para modificar el state y cerrar sesion
       dispatch(logout());
+
+      // action para borrar las notas de redux 
+      dispatch(noteLogout());
+
 
     } catch (error) {
       console.log(error);
@@ -104,5 +112,5 @@ export const startLogout = () => {
 
 export const logout = () => ({
   type: types.logout
-})
+});
 
